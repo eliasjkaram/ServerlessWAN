@@ -25,7 +25,6 @@ COPY requirements.txt .
 # Install Python dependencies
 RUN pip3 install --no-cache-dir --upgrade pip
 RUN pip3 install --no-cache-dir -r requirements.txt
-RUN pip3 install --no-cache-dir runpod opencv-python
 
 # Copy project files
 COPY . .
