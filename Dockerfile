@@ -3,6 +3,10 @@ FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
 # Set working directory
 WORKDIR /app
 
+# Set environment variables for non-interactive apt installation
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
+
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
@@ -12,6 +16,7 @@ RUN apt-get update && apt-get install -y \
     libxext6 \
     libgl1-mesa-glx \
     python3-pip \
+    tzdata \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements.txt
