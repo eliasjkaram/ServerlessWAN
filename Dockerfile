@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-devel
+FROM pytorch/pytorch:2.1.2-cuda12.1-cudnn8-devel
 
 # Set working directory
 WORKDIR /app
@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
     libsm6 \
     libxext6 \
     libgl1-mesa-glx \
+    libglib2.0-0 \
     python3-pip \
     tzdata \
     && rm -rf /var/lib/apt/lists/*
@@ -25,9 +26,13 @@ COPY requirements.txt .
 # Install Python dependencies
 RUN pip3 install --no-cache-dir --upgrade pip
 RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir opencv-python-headless
 
 # Copy project files
 COPY . .
+
+# Create necessary directories
+RUN mkdir -p /tmp
 
 # Set environment variables
 ENV MODEL_PATH="/runpod-volume/wan-models"
