@@ -1,0 +1,106 @@
+name: wan-video-generator
+image:
+  name: wan-video-generator
+  version: 2.1.0
+  description: "WAN 2.1 Text-to-Video and Image-to-Video Generator"
+  tags:
+    - video-generation
+    - text-to-video
+    - image-to-video
+    
+resources:
+  defaults:
+    gpu: 1
+    cpu: 4
+    memory: 32
+  requirements:
+    - gpu: 24GB+
+    - cuda: 12.1+
+    - pytorch: 2.4+
+
+input:
+  task:
+    type: string
+    description: "Task type: t2v-14B, t2v-1.3B, t2i-14B, or i2v-14B"
+    default: "t2v-14B"
+    enum:
+      - "t2v-14B"
+      - "t2v-1.3B"
+      - "t2i-14B"
+      - "i2v-14B"
+  prompt:
+    type: string
+    description: "Input text prompt for text-to-image or text-to-video tasks"
+    required: false
+  image:
+    type: string
+    description: "Input image URL for image-to-video tasks (can also be base64 encoded)"
+    required: false
+  size:
+    type: string
+    description: "Output size in format width*height"
+    default: "1280*720"
+  frame_num:
+    type: integer
+    description: "Number of frames to generate (should be 4n+1, default: 81 for video, 1 for images)"
+    default: 81
+  seed:
+    type: integer
+    description: "Random seed for generation (default: random)"
+    default: -1
+  sample_steps:
+    type: integer
+    description: "Number of sampling steps (default: 40 for i2v, 50 for t2v/t2i)"
+    required: false
+  sample_solver:
+    type: string
+    description: "Sampling solver to use"
+    default: "unipc"
+    enum:
+      - "unipc"
+      - "dpm++"
+  sample_guide_scale:
+    type: number
+    description: "Classifier-free guidance scale"
+    default: 5.0
+  offload_model:
+    type: boolean
+    description: "Whether to offload model to CPU to save GPU memory"
+    default: true
+
+output:
+  output:
+    type: object
+    description: "Generated output containing video, image, and metadata"
+    properties:
+      image:
+        type: string
+        description: "Base64 encoded PNG image (for t2i tasks)"
+      video:
+        type: string
+        description: "Base64 encoded MP4 video (for t2v and i2v tasks)"
+      seed:
+        type: integer
+        description: "Seed used for generation"
+      frame_count:
+        type: integer
+        description: "Number of frames in the generated video"
+      format:
+        type: string
+        description: "Output format (PNG or MP4)"
+  stats:
+    type: object
+    description: "Generation statistics"
+    properties:
+      generation_time:
+        type: number
+        description: "Time taken for generation in seconds"
+      task:
+        type: string
+        description: "Task used for generation"
+      size:
+        type: string
+        description: "Size of the generated output"
+      sample_steps:
+        type: integer
+        description: "Number of sampling steps used" 
